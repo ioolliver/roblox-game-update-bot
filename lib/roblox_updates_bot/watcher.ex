@@ -17,21 +17,25 @@ defmodule RobloxUpdatesBot.Watcher do
   end
 
   def schedule_check() do
-    :timer.sleep(5000)
+    delay = RobloxUpdatesBot.State.get_fetch_delay()
+    :timer.sleep(delay * 1000)
     GenServer.cast(__MODULE__, {:check, false})
   end
 
   def game_updated(universe_id) do
-    IO.puts("#{universe_id} ATUALIZOU!")
+    universe_id
+    |> RobloxUpdatesBot.State.fetch_game_info()
+    |> RobloxUpdatesBot.Discord.game_updated()
   end
 
   def check_for_updates() do
-    last_info = RobloxUpdatesBot.Worker.get_updates_date()
-    RobloxUpdatesBot.Worker.get_updated_games_date()
+    last_info = RobloxUpdatesBot.State.get_updates_date()
+
+    RobloxUpdatesBot.State.get_updated_games_date()
     |> IO.inspect()
     |> Enum.each(fn {u_id, date} ->
       if date != last_info["#{u_id}"] do
-        RobloxUpdatesBot.Worker.update_game_date(u_id, date)
+        RobloxUpdatesBot.State.update_game_date(u_id, date)
         game_updated(u_id)
       end
     end)
@@ -42,12 +46,13 @@ defmodule RobloxUpdatesBot.Watcher do
     schedule_check()
     {:noreply, state}
   end
+
   def handle_cast({:check, false}, state) do
     Logger.log(:info, "[ROBLOX BOT WATCHER] Checking for updates...")
     check_for_updates()
     schedule_check()
     {:noreply, state}
   end
-  def handle_cast(_, state), do: {:noreply, state}
 
+  def handle_cast(_, state), do: {:noreply, state}
 end

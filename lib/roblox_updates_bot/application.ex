@@ -8,7 +8,7 @@ defmodule RobloxUpdatesBot.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      RobloxUpdatesBot.Worker,
+      RobloxUpdatesBot.State,
       RobloxUpdatesBot.Discord,
       RobloxUpdatesBot.Watcher
       # Starts a worker by calling: RobloxUpdatesBot.Worker.start_link(arg)

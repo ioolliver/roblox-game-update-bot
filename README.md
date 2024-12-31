@@ -1,21 +1,22 @@
 # RobloxUpdatesBot
 
-**TODO: Add description**
+A Discord BOT that watch for Roblox games updates and notify in a specific channel when a game gets updated.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `roblox_updates_bot` to your list of dependencies in `mix.exs`:
+You will need [Elixir](https://elixir-lang.org/install.html#windows) installed on your machine.
 
-```elixir
-def deps do
-  [
-    {:roblox_updates_bot, "~> 0.1.0"}
-  ]
-end
-```
+Clone the project to your machine:
+`git clone https://github.com/ioolliver/roblox-game-update-bot`
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/roblox_updates_bot>.
+Inside the directory, installs the dependecies:
+`mix deps.get`
 
+Create a file named `secret.exs` inside the config folder. There, paste this code:
+```elixir import Config
+
+config :nostrum,
+  token: "YOUR_BOT_TOKEN"```
+
+To start your project, runs:
+`mix run --no-halt`
