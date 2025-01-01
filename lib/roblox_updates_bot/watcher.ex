@@ -32,7 +32,6 @@ defmodule RobloxUpdatesBot.Watcher do
     last_info = RobloxUpdatesBot.State.get_updates_date()
 
     RobloxUpdatesBot.State.get_updated_games_date()
-    |> IO.inspect()
     |> Enum.each(fn {u_id, date} ->
       if date != last_info["#{u_id}"] do
         RobloxUpdatesBot.State.update_game_date(u_id, date)
