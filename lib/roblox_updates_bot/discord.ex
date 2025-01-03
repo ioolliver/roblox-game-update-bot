@@ -8,6 +8,7 @@ defmodule RobloxUpdatesBot.Discord do
 
   defp is_member_admin?(guild_id, member) do
     guild = GuildCache.get!(guild_id)
+
     Member.guild_permissions(member, guild)
     |> Enum.member?(:administrator)
   end
@@ -22,10 +23,19 @@ defmodule RobloxUpdatesBot.Discord do
 
   def game_updated(game) do
     %{"name" => name, "rootPlaceId" => root_id} = game
-    case RobloxUpdatesBot.State.get_send_channel_id do
-      nil -> Logger.log(:warning, "Game \"#{name}\" updated but no share channel is set. Please use .channel on some channel in Discord.")
+
+    case RobloxUpdatesBot.State.get_send_channel_id() do
+      nil ->
+        Logger.log(
+          :warning,
+          "Game \"#{name}\" updated but no share channel is set. Please use .channel on some channel in Discord."
+        )
+
       channel ->
-        Api.create_message(channel, "[⭐] FRESH UPDATE ON **#{name}**\n\nCHECK OUT NOW!\n\n#{RobloxUpdatesBot.State.game_url}#{root_id}")
+        Api.create_message(
+          channel,
+          "[⭐] FRESH UPDATE ON **#{name}**\n\nCHECK OUT NOW!\n\n#{RobloxUpdatesBot.State.game_url()}#{root_id}"
+        )
     end
   end
 
@@ -77,12 +87,14 @@ defmodule RobloxUpdatesBot.Discord do
   defp check_command({".delay", args}, true, msg) do
     %{channel_id: channel_id} = msg
     delay = hd(args)
+
     case Integer.parse(delay) do
       {value, _} ->
         RobloxUpdatesBot.State.update_fetch_delay(value)
         Api.create_message(channel_id, "Checking for updates every #{value} seconds from now.")
 
-      _ -> Api.create_message(channel_id, "Please use .delay (number in seconds)")
+      _ ->
+        Api.create_message(channel_id, "Please use .delay (number in seconds)")
     end
   end
 

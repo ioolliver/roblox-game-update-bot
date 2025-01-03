@@ -73,17 +73,22 @@ defmodule RobloxUpdatesBot.State do
 
   @impl true
   def init(_) do
-    {:ok, %{
-      universe_ids: [],
-      last_update_date: %{},
-      games_cache: %{},
-      channel_id: nil,
-      fetch_delay: @default_fetch_delay
-    }}
+    {:ok,
+     %{
+       universe_ids: [],
+       last_update_date: %{},
+       games_cache: %{},
+       channel_id: nil,
+       fetch_delay: @default_fetch_delay
+     }}
   end
 
   defp insert_new_game(
-         %{universe_ids: universe_ids, last_update_date: last_update_date, games_cache: games_cache} = state,
+         %{
+           universe_ids: universe_ids,
+           last_update_date: last_update_date,
+           games_cache: games_cache
+         } = state,
          universe_id
        ) do
     state
@@ -108,15 +113,16 @@ defmodule RobloxUpdatesBot.State do
 
   def handle_call({:remove, universe_id}, _from, %{universe_ids: universe_ids} = state) do
     case Enum.member?(universe_ids, universe_id) do
-      false -> {:reply, {:error, :not_found}, state}
+      false ->
+        {:reply, {:error, :not_found}, state}
+
       true ->
-        {:reply,
-        {:ok, universe_id},
-        Map.put(
-          state,
-          :universe_ids,
-          Enum.filter(universe_ids, fn u -> u !== universe_id end)
-        )}
+        {:reply, {:ok, universe_id},
+         Map.put(
+           state,
+           :universe_ids,
+           Enum.filter(universe_ids, fn u -> u !== universe_id end)
+         )}
     end
   end
 
@@ -133,9 +139,11 @@ defmodule RobloxUpdatesBot.State do
     {:reply, game_info, state}
   end
 
-  def handle_call(:get_fetch_delay, _from, %{fetch_delay: fetch_delay} = state), do: {:reply, fetch_delay, state}
+  def handle_call(:get_fetch_delay, _from, %{fetch_delay: fetch_delay} = state),
+    do: {:reply, fetch_delay, state}
 
-  def handle_call(:get_channel_id, _from, %{channel_id: channel_id} = state), do: {:reply, channel_id, state}
+  def handle_call(:get_channel_id, _from, %{channel_id: channel_id} = state),
+    do: {:reply, channel_id, state}
 
   @impl true
   def handle_cast(
@@ -150,9 +158,11 @@ defmodule RobloxUpdatesBot.State do
 
     {:noreply, new_state}
   end
+
   def handle_cast({:update_fetch_delay, value}, state) do
     {:noreply, Map.put(state, :fetch_delay, value)}
   end
+
   def handle_cast({:update_channel_id, channel_id}, state) do
     {:noreply, Map.put(state, :channel_id, channel_id)}
   end
