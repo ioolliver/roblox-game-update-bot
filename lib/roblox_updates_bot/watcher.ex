@@ -1,6 +1,10 @@
 defmodule RobloxUpdatesBot.Watcher do
+  @moduledoc false
+
   require Logger
   use GenServer
+
+  alias RobloxUpdatesBot.{Discord, State}
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
@@ -12,29 +16,32 @@ defmodule RobloxUpdatesBot.Watcher do
     {:ok, %{}}
   end
 
-  def first_check() do
+  def first_check do
     GenServer.cast(__MODULE__, {:check, true})
   end
 
-  def schedule_check() do
-    delay = RobloxUpdatesBot.State.get_fetch_delay()
-    :timer.sleep(delay * 1000)
+  defp parse_to_ms(seconds), do: seconds * 1000
+
+  def schedule_check do
+    State.get_fetch_delay()
+    |> parse_to_ms()
+    |> :timer.sleep()
     GenServer.cast(__MODULE__, {:check, false})
   end
 
   def game_updated(universe_id) do
     universe_id
-    |> RobloxUpdatesBot.State.fetch_game_info()
-    |> RobloxUpdatesBot.Discord.game_updated()
+    |> State.fetch_game_info()
+    |> Discord.game_updated()
   end
 
-  def check_for_updates() do
-    last_info = RobloxUpdatesBot.State.get_updates_date()
+  def check_for_updates do
+    last_info = State.get_updates_date()
 
-    RobloxUpdatesBot.State.get_updated_games_date()
+    State.get_updated_games_date()
     |> Enum.each(fn {u_id, date} ->
       if date != last_info["#{u_id}"] do
-        RobloxUpdatesBot.State.update_game_date(u_id, date)
+        State.update_game_date(u_id, date)
         game_updated(u_id)
       end
     end)
