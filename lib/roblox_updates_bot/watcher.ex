@@ -8,26 +8,26 @@ defmodule RobloxUpdatesBot.Watcher do
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
-  end
 
+  end
   @impl true
   def init(_) do
     first_check()
     {:ok, %{}}
   end
 
-  def first_check do
+  defp first_check do
     GenServer.cast(__MODULE__, {:check, true})
   end
 
-  defp parse_to_ms(seconds), do: seconds * 1000
-
-  def schedule_check do
+  defp schedule_check do
     State.get_fetch_delay()
     |> parse_to_ms()
     |> :timer.sleep()
     GenServer.cast(__MODULE__, {:check, false})
   end
+
+  defp parse_to_ms(seconds), do: seconds * 1000
 
   def game_updated(universe_id) do
     universe_id

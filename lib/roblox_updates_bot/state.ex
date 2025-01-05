@@ -1,4 +1,7 @@
 defmodule RobloxUpdatesBot.State do
+  @moduledoc """
+  This module handles the BOT's state.
+  """
   use GenServer
 
   alias RobloxUpdatesBot.Roblox
@@ -8,12 +11,32 @@ defmodule RobloxUpdatesBot.State do
 
   # Client
 
-  def game_url(), do: @roblox_game_url
-
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
+  @doc """
+  Returns the preset game URL.
+
+    ## Examples:
+
+      iex> RobloxUpdatesBot.State.game_url()
+      "https://www.roblox.com/games/"
+  """
+  @spec game_url() :: String.t()
+  def game_url, do: @roblox_game_url
+
+  @doc """
+  Adds a game to the State.
+
+    Returns {:ok, "(game_universe_id)"} if success.
+
+    ## Examples:
+
+    iex> RobloxUpdateBot.State.add_game("https://www.roblox.com/games/18668065416")
+    {:ok, "6325068386"}
+  """
+  @spec add_game(String.t()) :: {:ok, String.t()} | {:error, :not_roblox_game} | {:error, :already_added}
   def add_game(game_link) do
     case String.starts_with?(game_link, @roblox_game_url) do
       true ->

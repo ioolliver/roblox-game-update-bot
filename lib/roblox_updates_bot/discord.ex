@@ -1,12 +1,14 @@
 defmodule RobloxUpdatesBot.Discord do
+  @moduledoc false
+
   use Nostrum.Consumer
 
   require Logger
   alias Nostrum.Api
-  alias Nostrum.Struct.Guild.Member
   alias Nostrum.Cache.GuildCache
+  alias Nostrum.Struct.Guild.Member
 
-  defp is_member_admin?(guild_id, member) do
+  defp member_admin?(guild_id, member) do
     guild = GuildCache.get!(guild_id)
 
     Member.guild_permissions(member, guild)
@@ -40,7 +42,7 @@ defmodule RobloxUpdatesBot.Discord do
   end
 
   def handle_event({:MESSAGE_CREATE, msg, _ws}) do
-    admin = is_member_admin?(msg.guild_id, msg.member)
+    admin = member_admin?(msg.guild_id, msg.member)
 
     convert_content_to_command(msg.content)
     |> check_command(admin, msg)
