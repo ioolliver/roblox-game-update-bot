@@ -27,7 +27,7 @@ defmodule RobloxUpdatesBot.State do
   def game_url, do: @roblox_game_url
 
   @doc """
-  Adds a game to the State.
+  Adds a game to the Watch list.
 
     Returns {:ok, "(game_universe_id)"} if success.
 
@@ -48,6 +48,20 @@ defmodule RobloxUpdatesBot.State do
     end
   end
 
+  @doc """
+  Removes a game from the Watch list.
+
+    Returns {:ok, "(game_universe_id)"} if success.
+
+    ## Examples:
+
+    iex> RobloxUpdateBot.State.remove_game("https://www.roblox.com/games/18668065416")
+    {:ok, "6325068386"}
+
+    iex> RobloxUpdateBot.State.remove_game("https://www.roblox.com/games/18668065416")
+    {:error, :not_found}
+  """
+  @spec remove_game(String.t()) :: {:ok, String.t()} | {:error, :not_roblox_game} | {:error, :not_found}
   def remove_game(game_link) do
     case String.starts_with?(game_link, @roblox_game_url) do
       true ->
@@ -59,11 +73,11 @@ defmodule RobloxUpdatesBot.State do
     end
   end
 
-  def get_updated_games_date() do
+  def get_updated_games_date do
     GenServer.call(__MODULE__, :get_updated_games_date)
   end
 
-  def get_updates_date() do
+  def get_updates_date do
     GenServer.call(__MODULE__, :get_updates_date)
   end
 
@@ -75,7 +89,7 @@ defmodule RobloxUpdatesBot.State do
     GenServer.call(__MODULE__, {:game_info, universe_id})
   end
 
-  def get_fetch_delay() do
+  def get_fetch_delay do
     GenServer.call(__MODULE__, :get_fetch_delay)
   end
 
@@ -83,7 +97,7 @@ defmodule RobloxUpdatesBot.State do
     GenServer.cast(__MODULE__, {:update_fetch_delay, value})
   end
 
-  def get_send_channel_id() do
+  def get_send_channel_id do
     GenServer.call(__MODULE__, :get_channel_id)
   end
 
