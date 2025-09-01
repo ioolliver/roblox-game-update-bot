@@ -11,6 +11,12 @@ Clone the project to your machine:
 git clone https://github.com/ioolliver/roblox-game-update-bot
 ```
 
+Go to the directory:
+
+```
+cd roblox-game-update-bot
+```
+
 Inside the directory, installs the dependecies:
 ```
 mix deps.get
